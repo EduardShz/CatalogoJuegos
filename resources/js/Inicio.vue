@@ -1,0 +1,3 @@
+<template>
+    Miau
+</template>
