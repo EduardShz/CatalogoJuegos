@@ -1,76 +1,94 @@
-<template>
-    <v-responsive class="border rounded" max-height="300">
-      <v-app :theme="theme">
-        <v-app-bar class="px-3">
-          <v-btn text="Iniciar Sesión" class="mr-1" slim to="/login"></v-btn>
-          <v-btn text="Registrarse" class="ml-1" slim to="/registro"></v-btn>
-          <v-btn
-            :prepend-icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-            text="Toggle Theme"
-            slim
-            @click="onClick"
-          ></v-btn>
-        </v-app-bar>
-  
-        <v-main>
-          <v-container>
-            <p class="text-h3 font-weight-bold text-center">Géneros Papá</p>
-            <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="p-6 bg-white border-b border-gray-200 mb-4">
-                    <div class="flex justify between">
-                        <Link :href="route('generos.create')" class="btn btn-primary">
-                            Añadir Género
-                        </Link>
-                    </div>
-                </div>
-
-                <div class="p-2 bg-white">
-                    <ul role="list" class="divide-y divide-gray-100">
-                        <li class="flex justify-between gap-x-2 py-2" v-for="genre in genres.data">
-                            <div class="flex min-w-0 gap-x-4 pt-2">
-                                <p class="text-md/5 font-semibold text-gray-900">{{ genre.name }}</p>
-                            </div>
-                            <div class="flex min-w-0 gap-x-4 pt-2 pe-4" v-if="$page.props.user.permissions.includes('update genres')">
-                                <p class="text-md/5 text-gray-900">
-                                    <Link :href="route('generos.edit', genre.id)">Editar</Link>
-                                    &nbsp;
-                                    <button @click="openModal(genre.id)">Eliminar</button>
-                                    <Modal :show="modals[genre.id]" maxWidth="lg" @close="closeModal(genre.id)">
-                                        <template #default>
-                                            <div class="p-4">
-                                                <h1 class="text-xl font-bold">Eliminar género</h1>
-                                                <p class="mt-2"> ¿Seguro que quieres eliminar <strong> {{ genre.name }} </strong>? </p>
-                                                
-                                                <form :action="route('generos.destroy', genre.id)" method="POST" class="mt-4">
-                                                    <input type="hidden" name="_token" :value="csrfToken">
-                                                    <input type="hidden" name="_method" value="DELETE">
-                                                    <button type="button" @click="closeModal(genre.id)" class="btn btn-secondary mt-4">Cerrar</button>
-                                                    &nbsp;
-                                                    <button type="submit" class="btn btn-danger mt-4"> Eliminar </button>
-                                                </form>
-                                            </div>
-                                        </template>
-                                    </Modal>
-                                </p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-          </v-container>
-        </v-main>
-      </v-app>
-    </v-responsive>
-</template>
-
 <script setup>
-  import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
-  const theme = ref('light')
+axios.defaults.headers.common['X-CSRF-TOKEN'] = document.head.querySelector('meta[name="csrf-token"]').content;
 
-  function onClick () {
-    theme.value = theme.value === 'light' ? 'dark' : 'light'
+const genres = ref([])
+
+const getGenres = async () => {
+  try {
+    const response = await axios.get('/getgenres') // Ruta para solicitar los datos de todos los géneros
+    genres.value = response.data // Pasar todos los datos recibidos a una variable de la vista
+  } catch (error) {
+    console.error('Error al obtener los géneros:', error)
   }
+}
+
+const deleteGenre = async (id) => {
+  try {
+    await axios.delete(`/deletegenre/${id}`); // Ruta para eliminar un género determinado
+    genres.value = genres.value.filter((genre) => genre.id !== id); // Filtra el elemento eliminado
+    isActive.value = false; // Esta variable cierra al modal que aparece al intentar eliminar un género
+  } catch (error) {
+    console.error("Error al eliminar el género:", error);
+    isActive.value = false
+  }
+};
+
+onMounted(getGenres); // Llama a los géneros al cargar la página
 </script>
+
+<template>
+  <v-app>
+    <v-app-bar class="px-3">
+      <v-icon>mdi-weather-night</v-icon>
+      <v-icon>mdi-weather-night</v-icon>
+      <v-btn text="Inicio" class="mr-1" slim :to="{ name: 'home' }"></v-btn>
+      <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }"></v-btn>
+    </v-app-bar>
+
+    <v-main>
+      <p class="text-h3 font-weight-bold text-center mt-4">Géneros</p>
+      <div class="py-12">
+        <div class="max-w-7xl mx-auto px-8">
+          <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4">
+            <div class="d-flex justify-space-between">
+              <v-btn :to="{ name: 'genres_create' }" class="bg-indigo-darken-4">
+                Añadir Genero
+              </v-btn>
+            </div>
+          </div>
+
+          <div class="p-2 bg-white">
+            <h1 class="text-h4 font-weight-bold mb-6">Listado</h1>
+            <ul role="list" class="divide-y divide-gray-100">
+              <li class="flex justify-between gap-x-2 py-2" v-for="genre in genres" :key="genre.id">
+                <div class="flex min-w-0 gap-x-4 pt-2">
+                  <p class="text-md/5 font-semibold text-gray-900">{{ genre.name }}</p>
+                </div>
+                <div class="flex min-w-0 gap-x-4 pt-2 pe-4">
+                  <p class="text-md/5 text-gray-900">
+                    <v-btn icon="mdi-pencil-outline" :to="{ name: 'genres_edit', params: { id: genre.id } }"
+                      variant="text"></v-btn>
+                    &nbsp;
+                    <v-dialog max-width="500">
+                      <template v-slot:activator="{ props: activatorProps }">
+                        <v-btn v-bind="activatorProps" icon="mdi-trash-can-outline" variant="text"></v-btn>
+                      </template>
+
+                      <template v-slot:default="{ isActive }">
+                        <v-card title="Eliminar Género">
+                          <v-card-text>
+                            ¿Está seguro de eliminar el género <strong>{{ genre.name }}</strong>?
+                          </v-card-text>
+
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+
+                            <v-btn text="Cancelar" @click="isActive.value = false"></v-btn>
+                            <v-btn text="Eliminar" color="red" @click="deleteGenre(genre.id)"></v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </template>
+                    </v-dialog>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </v-main>
+  </v-app>
+</template>

@@ -34,8 +34,6 @@ const login = async () => {
     form.loading = false;
   }
 };
-
-
 </script>
 
 <template>
