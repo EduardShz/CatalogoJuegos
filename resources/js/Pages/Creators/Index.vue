@@ -4,29 +4,29 @@ import axios from 'axios'
 
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.head.querySelector('meta[name="csrf-token"]').content;
 
-const genres = ref([])
+const creators = ref([])
 
-const getGenres = async () => {
+const getCreators = async () => {
   try {
-    const response = await axios.get('/getgenres') // Ruta para solicitar los datos de todos los géneros
-    genres.value = response.data // Pasar todos los datos recibidos a una variable de la vista
+    const response = await axios.get('/getcreators') // Ruta para solicitar los datos de todos los creadores
+    creators.value = response.data // Pasar todos los datos recibidos a una variable de la vista
   } catch (error) {
-    console.error('Error al obtener los géneros:', error)
+    console.error('Error al obtener los creadores:', error)
   }
 }
 
-const deleteGenre = async (id) => {
+const deleteCreator = async (id) => {
   try {
-    await axios.delete(`/deletegenre/${id}`); // Ruta para eliminar un género determinado
-    genres.value = genres.value.filter((genre) => genre.id !== id); // Filtra el elemento eliminado
+    await axios.delete(`/deletecreator/${id}`); // Ruta para eliminar un creador determinado
+    creators.value = creators.value.filter((creator) => creator.id !== id); // Filtra el elemento eliminado
     isActive.value = false; // Esta variable cierra al modal que aparece al intentar eliminar un género
   } catch (error) {
-    console.error("Error al eliminar el género:", error);
+    console.error("Error al eliminar el creador:", error);
     isActive.value = false
   }
 };
 
-onMounted(getGenres); // Llama a los géneros al cargar la página
+onMounted(getCreators); // Llama a los creadores al cargar la página
 </script>
 
 <template>
@@ -40,13 +40,13 @@ onMounted(getGenres); // Llama a los géneros al cargar la página
     </v-app-bar>
 
     <v-main>
-      <p class="text-h3 font-weight-bold text-center mt-4">Géneros</p>
+      <p class="text-h3 font-weight-bold text-center mt-4">Creadores</p>
       <div class="py-12">
         <div class="max-w-7xl mx-auto px-8">
           <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4">
             <div class="d-flex justify-space-between">
-              <v-btn :to="{ name: 'genres_create' }" class="bg-indigo-darken-4">
-                Añadir Genero
+              <v-btn :to="{ name: 'creators_create' }" class="bg-indigo-darken-4">
+                Añadir Creador
               </v-btn>
             </div>
           </div>
@@ -54,13 +54,13 @@ onMounted(getGenres); // Llama a los géneros al cargar la página
           <div class="p-2 bg-white">
             <h1 class="text-h4 font-weight-bold mb-6">Listado</h1>
             <ul role="list" class="divide-y divide-gray-100">
-              <li class="flex justify-between gap-x-2 py-2" v-for="genre in genres" :key="genre.id">
+              <li class="flex justify-between gap-x-2 py-2" v-for="creator in creators" :key="creator.id">
                 <div class="flex min-w-0 gap-x-4 pt-2">
-                  <p class="text-md/5 font-semibold text-gray-900">{{ genre.name }}</p>
+                  <p class="text-md/5 font-semibold text-gray-900">{{ creator.name }}</p>
                 </div>
                 <div class="flex min-w-0 gap-x-4 pt-2 pe-4">
                   <p class="text-md/5 text-gray-900">
-                    <v-btn icon="mdi-pencil-outline" :to="{ name: 'genres_edit', params: { id: genre.id } }"
+                    <v-btn icon="mdi-pencil-outline" :to="{ name: 'creators_edit', params: { id: creator.id } }"
                       variant="text"></v-btn>
                     &nbsp;
                     <v-dialog max-width="500">
@@ -69,16 +69,16 @@ onMounted(getGenres); // Llama a los géneros al cargar la página
                       </template>
 
                       <template v-slot:default="{ isActive }">
-                        <v-card title="Eliminar Género">
+                        <v-card title="Eliminar Creador">
                           <v-card-text>
-                            ¿Está seguro de eliminar el género <strong>{{ genre.name }}</strong>?
+                            ¿Está seguro de eliminar a <strong>{{ creator.name }}</strong>?
                           </v-card-text>
 
                           <v-card-actions>
                             <v-spacer></v-spacer>
 
                             <v-btn text="Cancelar" @click="isActive.value = false"></v-btn>
-                            <v-btn text="Eliminar" color="red" @click="deleteGenre(genre.id)"></v-btn>
+                            <v-btn text="Eliminar" color="red" @click="deleteCreator(creator.id)"></v-btn>
                           </v-card-actions>
                         </v-card>
                       </template>

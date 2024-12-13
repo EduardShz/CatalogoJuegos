@@ -9,18 +9,18 @@ const form = reactive({ // Usar 'reactive' en vez de 'rev'cuando se necesite má
     loading: false, // 'Loading' se utiliza para cambiar el estado de los botones al crear
 })
 
-const storeGenre = async () => {
+const storeCreator = async () => {
     form.loading = true;
 
     try {
-        const response = await axios.post('/storegenre', { // Ruta para mandar los datos para crear un nuevo dato al back
+        const response = await axios.post('/storecreator', { // Ruta para mandar los datos para crear un nuevo dato al back
             name: form.name,
         });
 
-        console.log('Género almacenado:', response.data.genre);
-        window.location.href='/generos' // Mandar hacia el index de géneros al terminar la creación
+        console.log('Creador almacenado:', response.data.creator);
+        window.location.href='/creadores' // Mandar hacia el index de creadores al terminar la creación
     } catch (error) {
-        console.error('Error al guardar el género:', error.response?.data || error);
+        console.error('Error al guardar al creador:', error.response?.data || error);
         form.loading = false;
     }
 };
@@ -32,17 +32,17 @@ const storeGenre = async () => {
             <v-icon>mdi-weather-night</v-icon>
             <v-icon>mdi-weather-night</v-icon>
             <v-btn text="Inicio" class="mr-1" slim :to="{ name: 'home' }"></v-btn>
-            <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }" variant="tonal"></v-btn>
-            <v-btn text="Creadores" class="mr-1" slim :to="{ name: 'creators' }"></v-btn>
+            <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }"></v-btn>
+            <v-btn text="Creadores" class="mr-1" slim :to="{ name: 'creators' }" variant="tonal"></v-btn>
         </v-app-bar>
 
         <v-main>
-            <p class="text-h3 font-weight-bold text-center mt-4">Géneros</p>
+            <p class="text-h3 font-weight-bold text-center mt-4">Creadores</p>
             <div class="py-12">
                 <div class="max-w-7xl mx-auto px-8">
                     <div class="p-2 bg-white">
-                        <h1 class="text-h4 font-weight-bold mb-6">Añadir Género</h1>
-                        <form @submit.prevent="storeGenre">
+                        <h1 class="text-h4 font-weight-bold mb-6">Añadir Creador</h1>
+                        <form @submit.prevent="storeCreator">
                             <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
                                 <div class="text-subtitle-1 text-medium-emphasis">Nombre</div>
                                 <v-text-field id="name" density="compact" placeholder="Nombre" variant="outlined"

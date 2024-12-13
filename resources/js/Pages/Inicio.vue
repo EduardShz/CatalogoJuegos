@@ -23,6 +23,7 @@ const logout = async () => {
                 <v-icon>mdi-weather-night</v-icon>
                 <v-btn text="Inicio" class="mr-1" slim :to="{ name: 'home' }"></v-btn>
                 <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }"></v-btn>
+                <v-btn text="Creadores" class="mr-1" slim :to="{ name: 'creators' }"></v-btn>
             </v-app-bar>
     
             <v-main>
