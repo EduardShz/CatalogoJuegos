@@ -24,12 +24,16 @@ const logout = async () => {
                 <v-btn text="Inicio" class="mr-1" slim :to="{ name: 'home' }"></v-btn>
                 <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }"></v-btn>
                 <v-btn text="Creadores" class="mr-1" slim :to="{ name: 'creators' }"></v-btn>
+                <v-btn text="Juegos" class="mr-1" slim :to="{ name: 'games' }"></v-btn>
             </v-app-bar>
     
             <v-main>
             <v-container>
                 <p class="text-h3 font-weight-bold text-center">Catálogo de Juegos</p>
             </v-container>
+
+            <v-btn text="Cerrar Sesión" color="primary" @click="logout">
+            </v-btn>
             </v-main>
         </v-app>
         </v-responsive>

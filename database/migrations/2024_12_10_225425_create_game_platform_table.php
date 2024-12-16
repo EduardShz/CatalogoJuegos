@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('game_platform', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('game_id');
-            $table->unsignedInteger('platform_id');
+            $table->unsignedBigInteger('game_id');
+            $table->unsignedBigInteger('platform_id');
             $table->timestamps();
+
+            $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
+            $table->foreign('platform_id')->references('id')->on('platforms')->onDelete('cascade');
         });
     }
 

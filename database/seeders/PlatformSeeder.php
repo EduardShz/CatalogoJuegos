@@ -14,9 +14,6 @@ class PlatformSeeder extends Seeder
     public function run(): void
     {
         Platform::create([
-            'name' => 'PlayStation'
-        ]);
-        Platform::create([
             'name' => 'PlayStation 5'
         ]);
         Platform::create([

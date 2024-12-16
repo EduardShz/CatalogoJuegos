@@ -45,6 +45,7 @@ onMounted(getCreator); // Activar la función que llama al creador al iniciar la
             <v-btn text="Inicio" class="mr-1" slim :to="{ name: 'home' }"></v-btn>
             <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }"></v-btn>
             <v-btn text="Creadores" class="mr-1" slim :to="{ name: 'creators' }" variant="tonal"></v-btn>
+            <v-btn text="Juegos" class="mr-1" slim :to="{ name: 'games' }"></v-btn>
         </v-app-bar>
 
         <v-main>

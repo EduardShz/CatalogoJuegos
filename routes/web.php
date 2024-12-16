@@ -1,36 +1,27 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CreatorController;
-use App\Http\Controllers\GenreController;
-use App\Models\Genre;
-use App\Models\User;
-use Illuminate\Http\Request;
+use Inertia\Inertia;
 
-// Rutas protegidas con autenticación
-Route::middleware('auth')->get('/user', function (Request $request) {
-    return response()->json($request->user());
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-Route::post('loginusers', [AuthController::class, 'login']);
-Route::post('logoutusers', [AuthController::class, 'logout']);
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-//Las rutas utilizadas aquí se usan como apis - Géneros
-Route::get('getgenres', [GenreController::class, 'index']);
-Route::post('storegenre', [GenreController::class, 'store']);
-Route::put('updategenre/{id}', [GenreController::class, 'update']);
-Route::get('genres/{id}', [GenreController::class, 'show']);
-Route::delete('deletegenre/{id}', [GenreController::class, 'destroy']);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-//Las rutas utilizadas aquí se usan como apis - Creadores
-Route::get('getcreators', [CreatorController::class, 'index']);
-Route::post('storecreator', [CreatorController::class, 'store']);
-Route::put('updatecreator/{id}', [CreatorController::class, 'update']);
-Route::get('creators/{id}', [CreatorController::class, 'show']);
-Route::delete('deletecreator/{id}', [CreatorController::class, 'destroy']);
-
-//Auth::routes();
-Route::get('{any}', function () {
-    return view('welcome');
-})->where('any', '.*');
+require __DIR__.'/auth.php';

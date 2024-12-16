@@ -17,16 +17,10 @@ return new class extends Migration
             $table->string('published_year', 4);
             $table->float('rating');
             $table->unsignedBigInteger('creator_id');
-            $table->unsignedBigInteger('platform_id');
-            $table->unsignedBigInteger('genre_id');
             $table->timestamps();
 
             $table->foreign('creator_id')->references('id')
             ->on('creators');
-            $table->foreign('platform_id')->references('id')
-            ->on('platforms');
-            $table->foreign('genre_id')->references('id')
-            ->on('genres');
         });
     }
 

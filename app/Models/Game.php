@@ -20,9 +20,9 @@ class Game extends Model
         'genre_id',
     ];
 
-    public function creators()
+    public function creator()
     {
-        return $this->belongsToMany(Creator::class);
+        return $this->belongsTo(Creator::class);
     }
 
     public function platforms()

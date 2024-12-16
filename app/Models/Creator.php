@@ -14,10 +14,4 @@ class Creator extends Model
     protected $fillable = [
         'name',
     ];
-
-    public function games()
-    {
-        return $this->belongsToMany(Game::class);
-    }
-
 }

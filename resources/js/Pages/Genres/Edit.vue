@@ -45,6 +45,7 @@ onMounted(getGenre); // Activar la función que llama al género al iniciar la v
             <v-btn text="Inicio" class="mr-1" slim :to="{ name: 'home' }"></v-btn>
             <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }" variant="tonal"></v-btn>
             <v-btn text="Creadores" class="mr-1" slim :to="{ name: 'creators' }"></v-btn>
+            <v-btn text="Juegos" class="mr-1" slim :to="{ name: 'games' }"></v-btn>
         </v-app-bar>
 
         <v-main>
