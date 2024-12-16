@@ -1,8 +1,8 @@
 <script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import { Head } from '@inertiajs/vue3'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-
-axios.defaults.headers.common['X-CSRF-TOKEN'] = document.head.querySelector('meta[name="csrf-token"]').content;
 
 const genres = ref([])
 
@@ -30,67 +30,62 @@ onMounted(getGenres); // Llama a los géneros al cargar la página
 </script>
 
 <template>
-  <v-app>
-    <v-app-bar class="px-3">
-      <v-icon>mdi-weather-night</v-icon>
-      <v-icon>mdi-weather-night</v-icon>
-      <v-btn text="Inicio" class="mr-1" slim :to="{ name: 'home' }"></v-btn>
-      <v-btn text="Generos" class="mr-1" slim :to="{ name: 'genres' }"></v-btn>
-      <v-btn text="Creadores" class="mr-1" slim :to="{ name: 'creators' }"></v-btn>
-      <v-btn text="Juegos" class="mr-1" slim :to="{ name: 'games' }"></v-btn>
-    </v-app-bar>
 
-    <v-main>
-      <p class="text-h3 font-weight-bold text-center mt-4">Géneros</p>
-      <div class="py-12">
-        <div class="max-w-7xl mx-auto px-8">
-          <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4">
-            <div class="d-flex justify-space-between">
-              <v-btn :to="{ name: 'genres_create' }" class="bg-indigo-darken-4">
-                Añadir Genero
-              </v-btn>
-            </div>
-          </div>
+  <Head title="Géneros" />
+  <AuthenticatedLayout>
+    <template #header>
+      <h2 class="text-xl font-semibold leading-tight text-gray-800">
+        Géneros
+      </h2>
+    </template>
 
-          <div class="p-2 bg-white">
-            <h1 class="text-h4 font-weight-bold mb-6">Listado</h1>
-            <ul role="list" class="divide-y divide-gray-100">
-              <li class="flex justify-between gap-x-2 py-2" v-for="genre in genres" :key="genre.id">
-                <div class="flex min-w-0 gap-x-4 pt-2">
-                  <p class="text-md/5 font-semibold text-gray-900">{{ genre.name }}</p>
-                </div>
-                <div class="flex min-w-0 gap-x-4 pt-2 pe-4">
-                  <p class="text-md/5 text-gray-900">
-                    <v-btn icon="mdi-pencil-outline" :to="{ name: 'genres_edit', params: { id: genre.id } }"
-                      variant="text"></v-btn>
-                    &nbsp;
-                    <v-dialog max-width="500">
-                      <template v-slot:activator="{ props: activatorProps }">
-                        <v-btn v-bind="activatorProps" icon="mdi-trash-can-outline" variant="text"></v-btn>
-                      </template>
-
-                      <template v-slot:default="{ isActive }">
-                        <v-card title="Eliminar Género">
-                          <v-card-text>
-                            ¿Está seguro de eliminar el género <strong>{{ genre.name }}</strong>?
-                          </v-card-text>
-
-                          <v-card-actions>
-                            <v-spacer></v-spacer>
-
-                            <v-btn text="Cancelar" @click="isActive.value = false"></v-btn>
-                            <v-btn text="Eliminar" color="red" @click="deleteGenre(genre.id)"></v-btn>
-                          </v-card-actions>
-                        </v-card>
-                      </template>
-                    </v-dialog>
-                  </p>
-                </div>
-              </li>
-            </ul>
+    <div class="py-12">
+      <div class="max-w-7xl mx-auto px-8">
+        <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4">
+          <div class="d-flex justify-space-between">
+            <v-btn :href="route('genres.create')" class="bg-indigo-darken-4">
+              Añadir Genero
+            </v-btn>
           </div>
         </div>
+
+        <div class="p-2 bg-white">
+          <h1 class="text-h4 font-weight-bold mb-6">Listado</h1>
+          <ul role="list" class="divide-y divide-gray-100">
+            <li class="flex justify-between gap-x-2 py-2" v-for="genre in genres" :key="genre.id">
+              <div class="flex min-w-0 gap-x-4 pt-2">
+                <p class="text-md/5 font-semibold text-gray-900">{{ genre.name }}</p>
+              </div>
+              <div class="flex min-w-0 gap-x-4 pt-2 pe-4">
+                <p class="text-md/5 text-gray-900">
+                  <v-btn icon="mdi-pencil-outline" :href="route('genres.edit', genre.id)" variant="text"></v-btn>
+                  &nbsp;
+                  <v-dialog max-width="500">
+                    <template v-slot:activator="{ props: activatorProps }">
+                      <v-btn v-bind="activatorProps" icon="mdi-trash-can-outline" variant="text"></v-btn>
+                    </template>
+
+                    <template v-slot:default="{ isActive }">
+                      <v-card title="Eliminar Género">
+                        <v-card-text>
+                          ¿Está seguro de eliminar el género <strong>{{ genre.name }}</strong>?
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+
+                          <v-btn text="Cancelar" @click="isActive.value = false"></v-btn>
+                          <v-btn text="Eliminar" color="red" @click="deleteGenre(genre.id)"></v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </template>
+                  </v-dialog>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </v-main>
-  </v-app>
+    </div>
+  </AuthenticatedLayout>
 </template>

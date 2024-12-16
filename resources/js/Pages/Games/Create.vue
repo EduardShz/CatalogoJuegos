@@ -120,11 +120,11 @@ onMounted(getCreators);
 
 <template>
 
-    <Head title="Crear Juego" />
+    <Head title="Juegos" />
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Crear Juego
+                Añadir Juego
             </h2>
         </template>
 

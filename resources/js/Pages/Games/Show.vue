@@ -44,7 +44,7 @@ onMounted(getGame); // Activar la función que llama al creador al iniciar la vi
 
 <template>
 
-    <Head title="Más Información - Juegos" />
+    <Head title="Juegos" />
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">

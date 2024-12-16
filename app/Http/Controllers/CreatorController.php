@@ -16,6 +16,11 @@ class CreatorController extends Controller
      */
     public function index()
     {
+        return inertia('Creators/Index');
+    }
+
+    public function getAllCreators()
+    {
         $creators = Creator::all();
         return response()->json($creators);
     }
@@ -25,7 +30,7 @@ class CreatorController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Creators/Create');
     }
 
     /**
@@ -53,9 +58,10 @@ class CreatorController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $creator = Creator::find($id);
+        return inertia('Creators/Edit', ['creator' => $creator]);
     }
 
     /**

@@ -28,14 +28,20 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     //Las rutas utilizadas aquí se usan como apis - Géneros
-    Route::get('getgenres', [GenreController::class, 'index']);
+    Route::get('/generos', [GenreController::class, 'index'])->name('genres.index');
+    Route::get('getgenres', [GenreController::class, 'getAllGenres']);
+    Route::get('/generos/create', [GenreController::class, 'create'])->name('genres.create');
     Route::post('storegenre', [GenreController::class, 'store']);
+    Route::get('/generos/{genre}/edit', [GenreController::class, 'edit'])->name('genres.edit');
     Route::put('updategenre/{genre}', [GenreController::class, 'update']);
     Route::get('genres/{genre}', [GenreController::class, 'show']);
     Route::delete('deletegenre/{genre}', [GenreController::class, 'destroy']);
     //Las rutas utilizadas aquí se usan como apis - Creadores
-    Route::get('getcreators', [CreatorController::class, 'index']);
+    Route::get('/creadores', [CreatorController::class, 'index'])->name('creators.index');
+    Route::get('getcreators', [CreatorController::class, 'getAllCreators']);
+    Route::get('/creadores/create', [CreatorController::class, 'create'])->name('creators.create');
     Route::post('storecreator', [CreatorController::class, 'store']);
+    Route::get('/creadores/{creator}/edit', [CreatorController::class, 'edit'])->name('creators.edit');
     Route::put('updatecreator/{creator}', [CreatorController::class, 'update']);
     Route::get('creators/{creator}', [CreatorController::class, 'show']);
     Route::delete('deletecreator/{creator}', [CreatorController::class, 'destroy']);

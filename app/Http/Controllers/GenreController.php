@@ -16,6 +16,11 @@ class GenreController extends Controller
      */
     public function index()
     {
+        return inertia('Genres/Index');
+    }
+
+    public function getAllGenres()
+    {
         $genres = Genre::all();
         return response()->json($genres);
     }
@@ -25,7 +30,7 @@ class GenreController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Genres/Create');
     }
 
     /**
@@ -53,9 +58,10 @@ class GenreController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $genre = Genre::find($id);
+        return inertia('Genres/Edit', ['genre' => $genre]);
     }
 
     /**

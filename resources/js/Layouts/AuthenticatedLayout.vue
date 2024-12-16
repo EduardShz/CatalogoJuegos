@@ -37,6 +37,18 @@ const showingNavigationDropdown = ref(false);
                                     Juegos
                                 </NavLink>
                             </div>
+
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('genres.index')" :active="route().current('genres.*')">
+                                    Géneros
+                                </NavLink>
+                            </div>
+
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('creators.index')" :active="route().current('creators.*')">
+                                    Creadores
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">

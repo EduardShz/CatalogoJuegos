@@ -102,7 +102,7 @@ onMounted(getCreators);
 
 <template>
 
-    <Head title="Editar Juego" />
+    <Head title="Juegos" />
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
