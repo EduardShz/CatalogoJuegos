@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Requests\GameRequest;
 use Illuminate\Http\Request;
 use App\Models\Game;
+use Inertia\Inertia;
 
 class GameController extends Controller
 {
@@ -13,6 +14,11 @@ class GameController extends Controller
      * Display a listing of the resource.
      */
     public function index()
+    {
+        return inertia('Games/Index');
+    }
+
+    public function getAllGames()
     {
         $games = Game::with(['platforms', 'genres'])->get();
 
@@ -36,7 +42,7 @@ class GameController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Games/Create');
     }
 
     /**
@@ -59,6 +65,12 @@ class GameController extends Controller
             'success' => true,
             'game' => $game,
         ], 201);
+    }
+
+    public function more($id)
+    {
+        $game = Game::find($id);
+        return inertia('Games/Show', ['game' => $game]);
     }
 
     /**
@@ -97,9 +109,10 @@ class GameController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $game = Game::find($id);
+        return inertia('Games/Edit', ['game' => $game]);
     }
 
     /**
