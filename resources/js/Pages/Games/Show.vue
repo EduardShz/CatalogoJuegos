@@ -3,7 +3,7 @@ import LayoutTitle from '@/Own/Components/LayoutTitle.vue'
 import CommentForm from '@/Own/Components/CommentForm.vue'
 import { useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
-import { getShowGame, getComments } from '@/api';
+import { getShowGame, getComments, toggleLikeGame } from '@/api';
 
 const form = ref({ // Usar 'reactive' en vez de 'rev' cuando se necesite más de un campo con 'ref'
     name: '',
@@ -15,7 +15,6 @@ const form = ref({ // Usar 'reactive' en vez de 'rev' cuando se necesite más de
 })
 const loading = ref(false)
 const route = useRoute()
-const selection = ref([])
 const comments = ref([])
 
 const loadGame = async () => {
@@ -26,12 +25,21 @@ const loadGame = async () => {
 const loadComments = async () => {
     const data = await getComments(route.params.id)
     comments.value = data;
-    console.log(data)
 }
 
 const addComment = async () => {
     loadComments()
 }
+
+const toggleLike = async (id) => {
+  try {
+    await toggleLikeGame(id);
+    
+    await loadGame()
+  } catch (error) {
+    console.error('Error al dar like al juego', error);
+  }
+};
 
 onMounted(() => {
     loadGame()
@@ -53,12 +61,8 @@ onMounted(() => {
                         </div>
 
                         <div>
-                            <v-item-group v-model="selection">
-                                <v-item v-slot="{ isSelected, toggle }">
-                                    <v-btn :icon="isSelected ? 'mdi-heart' : 'mdi-heart-outline'"
-                                        @click="toggle"></v-btn>
-                                </v-item>
-                            </v-item-group>
+                            <v-btn :icon="form.liked_by_user ? 'mdi-heart' : 'mdi-heart-outline'"
+                                @click="toggleLike(form.id)" variant="text"></v-btn>
                         </div>
                     </div>
 

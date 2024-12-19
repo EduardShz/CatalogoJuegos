@@ -7,6 +7,7 @@ use App\Http\Requests\GameRequest;
 use Illuminate\Http\Request;
 use App\Models\Game;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class GameController extends Controller
@@ -16,10 +17,12 @@ class GameController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+
         $games = Game::with(['platforms', 'genres'])->get();
 
         return response()->json([
-            'data' => $games->map(function ($game) {
+            'data' => $games->map(function ($game) use ($user) {
                 return [
                     'id' => $game->id,
                     'name' => $game->name,
@@ -28,6 +31,9 @@ class GameController extends Controller
                     'creator' => $game->creator->name,
                     'platforms' => $game->platforms->pluck('name'), // Devuelve una lista de nombres de plataformas
                     'genres' => $game->genres->pluck('name'), // Devuelve una lista de nombres de géneros
+                    'likes_count' => $game->likes()->count(), // Número de likes
+                    'liked_by_user' => $user ? $game->likedByUser($user->id) : false, // Si el usuario ha dado like
+
                 ];
             })
         ]);
@@ -75,6 +81,8 @@ class GameController extends Controller
 
     public function showName($id)
     {
+        $user = Auth::user();
+
         $game = Game::with(['creator', 'platforms', 'genres'])->findOrFail($id);
 
         return response()->json([
@@ -85,6 +93,7 @@ class GameController extends Controller
             'creator' => $game->creator->name, // Nombre del creador
             'platforms' => $game->platforms->pluck('name'), // Nombres de las plataformas
             'genres' => $game->genres->pluck('name'), // Nombres de los géneros
+            'liked_by_user' => $user ? $game->likedByUser($user->id) : false, // Si el usuario ha dado like
         ]);
     }
 
@@ -117,7 +126,7 @@ class GameController extends Controller
     public function destroy(Game $game)
     {
         $game->delete();
-        
+
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

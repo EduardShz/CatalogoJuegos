@@ -26,10 +26,10 @@ export const deleteGenre = async (id) => {
     await client.delete(`genres/${id}`);
 };
 export const storeGenre = async (data) => {
-    await axios.post("/api/genres/store", data);
+    await client.post("genres/store", data);
 };
 export const updateGenre = async (id, data) => {
-    await axios.put(`/api/genres/${id}`, data);
+    await client.put(`genres/${id}`, data);
 };
 
 // Apis de Creadores
@@ -45,10 +45,10 @@ export const deleteCreator = async (id) => {
     await client.delete(`creators/${id}`);
 };
 export const storeCreator = async (data) => {
-    await axios.post("/api/creators/store", data);
+    await client.post("creators/store", data);
 };
 export const updateCreator = async (id, data) => {
-    await axios.put(`/api/creators/${id}`, data);
+    await client.put(`creators/${id}`, data);
 };
 
 // Apis de Juegos
@@ -68,10 +68,10 @@ export const deleteGame = async (id) => {
     await client.delete(`games/${id}`);
 };
 export const storeGame = async (data) => {
-    await axios.post("/api/games/store", data);
+    await client.post("games/store", data);
 };
 export const updateGame = async (id, data) => {
-    await axios.put(`/api/games/${id}`, data);
+    await client.put(`games/${id}`, data);
 };
 
 // Apis de Comentarios
@@ -83,11 +83,16 @@ export const deleteComment = async (gId, cId) => {
     await client.delete(`games/${gId}/comments/${cId}`);
 };
 export const storeComment = async (id, data) => {
-    await axios.post(`/api/games/${id}/comments`, data);
+    await client.post(`games/${id}/comments`, data);
 };
 // export const updateGame = async (id, data) => {
 //     await axios.put(`/api/games/${id}`, data);
 // };
+
+// Apis de Likes
+export const toggleLikeGame = async (id) => {
+    await client.post(`games/${id}/likes`);
+};
 
 // Apis de Usuarios
 export const getUser = async () => {
@@ -97,7 +102,7 @@ export const getUser = async () => {
             throw new Error("No se encontró el token");
         }
 
-        const response = await axios.get("/api/user", {
+        const response = await client.get("user", {
             headers: {
                 Authorization: `Bearer ${token}`, // Agregar el token a la cabecera
             },

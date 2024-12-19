@@ -44,4 +44,16 @@ class Game extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    // Relación con los likes
+    public function likes()
+    {
+        return $this->hasMany(GameUser::class);
+    }
+
+    // Verificar si un usuario específico le ha dado like al juego
+    public function likedByUser($userId)
+    {
+        return $this->likes()->where('user_id', $userId)->exists();
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CreatorController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GameUserController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\PlatformController;
 use App\Http\Controllers\ProfileController;
@@ -29,21 +30,21 @@ Route::middleware(['auth'])->group(function () {
     //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    //Las rutas utilizadas aquí se usan como apis - Géneros
+    // Géneros
     Route::get('api/genres', [GenreController::class, 'index']);
     Route::post('api/genres/store', [GenreController::class, 'store']);
     Route::put('api/genres/{genre}', [GenreController::class, 'update']);
     Route::get('api/genres/{genre}', [GenreController::class, 'show']);
     Route::delete('api/genres/{genre}', [GenreController::class, 'destroy']);
 
-    //Las rutas utilizadas aquí se usan como apis - Creadores
+    // Creadores
     Route::get('api/creators', [CreatorController::class, 'index']);
     Route::post('api/creators/store', [CreatorController::class, 'store']);
     Route::put('api/creators/{creator}', [CreatorController::class, 'update']);
     Route::get('api/creators/{creator}', [CreatorController::class, 'show']);
     Route::delete('api/creators/{creator}', [CreatorController::class, 'destroy']);
 
-    //Las rutas utilizadas aquí se usan como apis - Juegos
+    // Juegos
     Route::get('api/games', [GameController::class, 'index']);
     Route::post('api/games/store', [GameController::class, 'store']);
     Route::put('api/games/{game}', [GameController::class, 'update']);
@@ -53,9 +54,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('api/platforms', [PlatformController::class, 'index']);
 
+    // Comentarios
     Route::get('api/games/{game}/comments', [CommentController::class, 'index']);
     Route::post('api/games/{game}/comments', [CommentController::class, 'store']);
     Route::delete('api/games/{game}/comments/{comment}', [CommentController::class, 'destroy']);
+
+    // Likes
+    Route::post('api/games/{game}/likes', [GameUserController::class, 'toggleLike']);
 });
 
 

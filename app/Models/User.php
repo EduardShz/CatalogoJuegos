@@ -65,4 +65,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    // Relación con los likes dados por el usuario
+    public function gameLikes()
+    {
+        return $this->hasMany(GameUser::class);
+    }
 }

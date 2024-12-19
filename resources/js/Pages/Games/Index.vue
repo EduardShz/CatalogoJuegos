@@ -1,11 +1,10 @@
 <script setup>
 import LayoutTitle from '@/Own/Components/LayoutTitle.vue'
-import { getGames, deleteGame } from '@/api'
+import { getGames, deleteGame, toggleLikeGame } from '@/api'
 import { ref, onMounted } from 'vue'
 import axios from 'axios';
 
 const games = ref([])
-const selection = ref([])
 const roles = ref([])
 
 axios.get('/api/user/roles').then(response => {
@@ -37,9 +36,19 @@ const destroyGame = async (id) => {
   }
 };
 
+const toggleLike = async (id) => {
+  try {
+    // Realizar la solicitud para dar like
+    await toggleLikeGame(id);
+    await loadGames();
+  } catch (error) {
+    console.error('Error al dar like al juego', error);
+  }
+};
+
 onMounted(() => {
   loadGames()
-}); // Llama a los géneros al cargar la página
+});
 </script>
 
 <template>
@@ -73,11 +82,11 @@ onMounted(() => {
           </div>
         </td>
         <td class="d-flex justify-center text-center">
-          <v-item-group v-model="selection">
-            <v-item v-slot="{ isSelected, toggle }">
-              <v-btn :icon="isSelected ? 'mdi-heart' : 'mdi-heart-outline'" @click="toggle" variant="text"></v-btn>
-            </v-item>
-          </v-item-group>
+          <div class="d-flex align-center mr-1">
+            <v-btn :icon="game.liked_by_user ? 'mdi-heart' : 'mdi-heart-outline'" @click="toggleLike(game.id)"
+              variant="text"></v-btn>
+            <p>{{ game.likes_count }}</p>
+          </div>
 
           <v-btn icon="mdi-information-outline" :to="{ name: 'games_show', params: { id: game.id } }"
             variant="text"></v-btn>
