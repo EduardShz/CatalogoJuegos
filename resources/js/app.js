@@ -30,27 +30,3 @@ directives,
 
 createApp(App).use(vuetify).use(router).mount('#app')
 
-// const app = createApp({ render: () => h(App, props) })
-// .use(vuetify)
-// .use(router)
-// .mount(el);
-
-// createInertiaApp({
-//     title: (title) => `${title} - ${appName}`,
-//     resolve: (name) =>
-//         resolvePageComponent(
-//             `./Pages/${name}.vue`,
-//             import.meta.glob('./Pages/**/*.vue'),
-//         ),
-//     setup({ el, App, props, plugin }) {
-//         return createApp({ render: () => h(App, props) })
-//             .use(plugin)
-//             .use(vuetify)
-//             .use(router)
-//             .use(ZiggyVue)
-//             .mount(el);
-//     },
-//     progress: {
-//         color: '#4B5563',
-//     },
-// });

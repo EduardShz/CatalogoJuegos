@@ -11,26 +11,39 @@ import GameCreate from './Pages/Games/Create.vue'
 import GameEdit from './Pages/Games/Edit.vue'
 import GameShow from './Pages/Games/Show.vue'
 import Login from './Pages/Auth/Login.vue'
+import Welcome from './Pages/Welcome.vue'
 
 const routes = [
-    { path: '/', component: Inicio, name: 'home' },
+    { path: '/', component: Welcome, name: 'welcome' },
     { path: '/login', component: Login, name: 'login' },
-    { path: '/generos', component: GenresIndex, name: 'genres' },
-    { path: '/generos/create', component: GenreCreate, name: 'genres_create' },
-    { path: '/generos/:id/edit', component: GenreEdit, name: 'genres_edit' },
-    { path: '/creadores', component: CreatorsIndex, name: 'creators' },
-    { path: '/creadores/create', component: CreatorCreate, name: 'creators_create' },
-    { path: '/creadores/:id/edit', component: CreatorEdit, name: 'creators_edit'},
-    { path: '/juegos', component: GamesIndex, name: 'games' },
-    { path: '/juegos/create', component: GameCreate, name: 'games_create' },
-    { path: '/juegos/:id/edit', component: GameEdit, name: 'games_edit'},
-    { path: '/juegos/:id/', component: GameShow, name: 'games_show', props: true },
+    { path: '/home', component: Inicio, name: 'home',  meta: { requiresAuth: true } },
+    { path: '/generos', component: GenresIndex, name: 'genres',  meta: { requiresAuth: true } },
+    { path: '/generos/create', component: GenreCreate, name: 'genres_create',  meta: { requiresAuth: true } },
+    { path: '/generos/:id/edit', component: GenreEdit, name: 'genres_edit',  meta: { requiresAuth: true } },
+    { path: '/creadores', component: CreatorsIndex, name: 'creators',  meta: { requiresAuth: true } },
+    { path: '/creadores/create', component: CreatorCreate, name: 'creators_create',  meta: { requiresAuth: true } },
+    { path: '/creadores/:id/edit', component: CreatorEdit, name: 'creators_edit',  meta: { requiresAuth: true } },
+    { path: '/juegos', component: GamesIndex, name: 'games',  meta: { requiresAuth: true } },
+    { path: '/juegos/create', component: GameCreate, name: 'games_create',  meta: { requiresAuth: true } },
+    { path: '/juegos/:id/edit', component: GameEdit, name: 'games_edit',  meta: { requiresAuth: true } },
+    { path: '/juegos/:id/', component: GameShow, name: 'games_show',  meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
 })
+
+router.beforeEach((to, from, next) => {
+    const isAuthenticated = localStorage.getItem('token');  // Verifica si existe el token
+
+    // Si la ruta requiere autenticación y no está autenticado, redirige al login
+    if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+        next({ name: 'login' });
+    } else {
+        next();  // Si está autenticado o la ruta no requiere autenticación, permite continuar
+    }
+});
 
 export default router
 

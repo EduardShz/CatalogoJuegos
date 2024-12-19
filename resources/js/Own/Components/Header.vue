@@ -8,6 +8,7 @@ const router = useRouter()
 
 const logOut = async () => {
     const response = await axios.post('/api/logout', form.value)
+    localStorage.removeItem('token');
     router.push({ name: 'login' })
 }
 </script>

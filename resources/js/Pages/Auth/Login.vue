@@ -9,10 +9,23 @@ const form = ref({
 })
 const router = useRouter()
 const visible = ref(false)
+const errorMessages = ref({})
 
 const doLogin = async () => {
-    await axios.post('/api/login', form.value)
-    router.push({ name: 'home' })
+    try {
+        const response = await axios.post('/api/login', form.value)
+
+        router.push({ name: 'home' })
+        const token = response.data.token;
+        localStorage.setItem('token', token)
+    } catch (error) {
+        if (error.response.status == 422) {
+            errorMessages.value = error.response.data.errors
+            console.error('Error al intentar iniciar sesión:', error)
+
+            return errorMessages
+        }
+    }
 }
 </script>
 
@@ -26,7 +39,8 @@ const doLogin = async () => {
                 <div class="text-subtitle-1 text-medium-emphasis">Correo Electrónico</div>
 
                 <v-text-field v-model="form.email" density="compact" placeholder="Correo electrónico"
-                    prepend-inner-icon="mdi-email-outline" variant="outlined"></v-text-field>
+                    prepend-inner-icon="mdi-email-outline" variant="outlined"
+                    :error-messages="errorMessages.email"></v-text-field>
 
                 <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
                     Contraseña
@@ -34,8 +48,8 @@ const doLogin = async () => {
 
                 <v-text-field v-model="form.password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                     :type="visible ? 'text' : 'password'" density="compact" placeholder="Escriba su Contraseña"
-                    prepend-inner-icon="mdi-lock-outline" variant="outlined"
-                    @click:append-inner="visible = !visible"></v-text-field>
+                    prepend-inner-icon="mdi-lock-outline" variant="outlined" @click:append-inner="visible = !visible"
+                    :error-messages="errorMessages.password"></v-text-field>
 
                 <v-btn class="mb-8" color="blue" size="large" variant="tonal" type="submit" block>
                     Iniciar Sesión

@@ -32,6 +32,14 @@ class LoginRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'email.required' => ('Se requiere escribir su correo electrónico'),
+            'password.required' => ('Se requiere escribir la contraseña de su cuenta')
+        ];
+    }
+
     /**
      * Attempt to authenticate the request's credentials.
      *
