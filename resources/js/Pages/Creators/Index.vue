@@ -3,9 +3,19 @@ import LayoutTitle from '@/Own/Components/LayoutTitle.vue'
 import { getCreators, deleteCreator } from '@/api'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 const creators = ref([])
 const route = useRoute()
+const roles = ref([])
+
+axios.get('/api/user/roles').then(response => {
+  roles.value = response.data.roles;
+});
+
+function hasRole(role) {
+  return roles.value.includes(role);
+}
 
 const loadCreators = async () => {
   try {
@@ -36,7 +46,7 @@ onMounted(() => {
 <template>
   <LayoutTitle title="Creadores" />
 
-  <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4 py-5 pl-4">
+  <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4 py-5 pl-4" v-if="hasRole('admin')">
     <div class="d-flex justify-space-between">
       <v-btn class="bg-indigo-darken-4" :to="{ name: 'creators_create' }" text="Añadir Creador"></v-btn>
     </div>
@@ -56,7 +66,7 @@ onMounted(() => {
     <tbody>
       <tr v-for="creator in creators" :key="creator.id" class="">
         <td>{{ creator.name }}</td>
-        <td class="text-center">
+        <td class="text-center" v-if="hasRole('admin')">
           <v-btn icon="mdi-pencil-outline" :to="{ name: 'creators_edit', params: { id: creator.id } }"
             variant="text"></v-btn>
 

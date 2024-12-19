@@ -46,5 +46,8 @@ class GenreSeeder extends Seeder
         Genre::create([
             'name' => 'Simulación'
         ]);
+        Genre::create([
+            'name' => 'Sandbox'
+        ]);
     }
 }

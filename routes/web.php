@@ -10,6 +10,7 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\PlatformController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('api/login', [LoginController::class, 'login']);
@@ -18,6 +19,12 @@ Route::post('api/register', [RegisterController::class, 'register']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('api/user', [RegisteredUserController::class, 'show']);
+    Route::get('api/user/roles', function (Request $request) {
+        // Devuelve los roles del usuario autenticado
+        return response()->json([
+            'roles' => $request->user()->getRoleNames(), // Método de Spatie para obtener roles
+        ]);
+    });
     //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -44,10 +51,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('api/games/{game}/showN', [GameController::class, 'showName']);
     Route::delete('api/games/{game}', [GameController::class, 'destroy']);
 
-Route::get('api/platforms', [PlatformController::class, 'index']);
+    Route::get('api/platforms', [PlatformController::class, 'index']);
 
-    //     Route::post('/juegos/{game}/sabermas/comentarios', [CommentController::class, 'post'])->name('comments.post');
-    //     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::get('api/games/{game}/comments', [CommentController::class, 'index']);
+    Route::post('api/games/{game}/comments', [CommentController::class, 'store']);
+    Route::delete('api/games/{game}/comments/{comment}', [CommentController::class, 'destroy']);
 });
 
 

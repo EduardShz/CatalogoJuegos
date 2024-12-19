@@ -74,6 +74,22 @@ export const updateGame = async (id, data) => {
     await axios.put(`/api/games/${id}`, data);
 };
 
+// Apis de Comentarios
+export const getComments = async (id) => {
+    const { data } = await client.get(`games/${id}/comments`);
+    return data;
+};
+export const deleteComment = async (gId, cId) => {
+    await client.delete(`games/${gId}/comments/${cId}`);
+};
+export const storeComment = async (id, data) => {
+    await axios.post(`/api/games/${id}/comments`, data);
+};
+// export const updateGame = async (id, data) => {
+//     await axios.put(`/api/games/${id}`, data);
+// };
+
+// Apis de Usuarios
 export const getUser = async () => {
     try {
         const token = localStorage.getItem("token"); // Obtener el token del localStorage

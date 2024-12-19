@@ -14,10 +14,12 @@ const errorMessages = ref({})
 const doLogin = async () => {
     try {
         const response = await axios.post('/api/login', form.value)
-
-        router.push({ name: 'home' })
         const token = response.data.token;
         localStorage.setItem('token', token)
+        localStorage.setItem('roles', JSON.stringify(response.data.roles));
+        localStorage.setItem('permissions', JSON.stringify(response.data.permissions));
+
+        router.push({ name: 'home' })
     } catch (error) {
         if (error.response.status == 422) {
             errorMessages.value = error.response.data.errors

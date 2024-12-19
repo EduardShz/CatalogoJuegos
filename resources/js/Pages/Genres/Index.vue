@@ -3,9 +3,20 @@ import LayoutTitle from '@/Own/Components/LayoutTitle.vue'
 import { getGenres, deleteGenre } from '@/api'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 const genres = ref([])
 const route = useRoute()
+const roles = ref([])
+
+axios.get('/api/user/roles').then(response => {
+  roles.value = response.data.roles;
+});
+
+function hasRole(role) {
+  return roles.value.includes(role);
+}
+
 
 const loadGenres = async () => {
   try {
@@ -36,7 +47,7 @@ onMounted(() => {
 <template>
   <LayoutTitle title="Géneros" />
 
-  <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4 py-5 pl-4">
+  <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4 py-5 pl-4" v-if="hasRole('admin')">
     <div class="d-flex justify-space-between">
       <v-btn class="bg-indigo-darken-4" :to="{ name: 'genres_create' }" text="Añadir Genero"></v-btn>
     </div>
@@ -56,7 +67,7 @@ onMounted(() => {
     <tbody>
       <tr v-for="genre in genres" :key="genre.id" class="">
         <td>{{ genre.name }}</td>
-        <td class="text-center">
+        <td class="text-center" v-if="hasRole('admin')">
           <v-btn icon="mdi-pencil-outline" :to="{ name: 'genres_edit', params: { id: genre.id } }"
             variant="text"></v-btn>
 

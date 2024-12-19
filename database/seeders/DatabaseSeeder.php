@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             CreatorSeeder::class,
             PlatformSeeder::class,
             RoleSeeder::class,
-            UserSeeder::class
+            GameSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

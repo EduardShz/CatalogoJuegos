@@ -34,5 +34,11 @@ class CreatorSeeder extends Seeder
         Creator::create([
             'name' => 'Sony'
         ]);
+        Creator::create([
+            'name' => 'Insomiac'
+        ]);
+        Creator::create([
+            'name' => 'Mojang'
+        ]);
     }
 }

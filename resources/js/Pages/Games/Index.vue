@@ -2,9 +2,19 @@
 import LayoutTitle from '@/Own/Components/LayoutTitle.vue'
 import { getGames, deleteGame } from '@/api'
 import { ref, onMounted } from 'vue'
+import axios from 'axios';
 
 const games = ref([])
 const selection = ref([])
+const roles = ref([])
+
+axios.get('/api/user/roles').then(response => {
+  roles.value = response.data.roles;
+});
+
+function hasRole(role) {
+  return roles.value.includes(role);
+}
 
 const loadGames = async () => {
   try {
@@ -35,7 +45,7 @@ onMounted(() => {
 <template>
   <LayoutTitle title="Juegos" />
 
-  <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4 py-5 pl-4">
+  <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4 py-5 pl-4" v-if="hasRole('admin')">
     <div class="d-flex justify-space-between">
       <v-btn class="bg-indigo-darken-4" :to="{ name: 'games_create' }" text="Añadir Juego"></v-btn>
     </div>
@@ -69,11 +79,13 @@ onMounted(() => {
             </v-item>
           </v-item-group>
 
-          <v-btn icon="mdi-information-outline" :to="{ name: 'games_show', params: { id: game.id } }" variant="text"></v-btn>
+          <v-btn icon="mdi-information-outline" :to="{ name: 'games_show', params: { id: game.id } }"
+            variant="text"></v-btn>
 
-          <v-btn icon="mdi-pencil-outline" :to="{ name: 'games_edit', params: { id: game.id } }" variant="text"></v-btn>
+          <v-btn icon="mdi-pencil-outline" :to="{ name: 'games_edit', params: { id: game.id } }" variant="text"
+            v-if="hasRole('admin')"></v-btn>
 
-          <v-dialog max-width="500">
+          <v-dialog max-width="500" v-if="hasRole('admin')">
             <template v-slot:activator="{ props: activatorProps }">
               <v-btn v-bind="activatorProps" icon="mdi-trash-can-outline" variant="text"></v-btn>
             </template>
