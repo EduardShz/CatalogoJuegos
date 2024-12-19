@@ -1,91 +1,87 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { Head } from '@inertiajs/vue3'
+import LayoutTitle from '@/Own/Components/LayoutTitle.vue'
+import { getCreators, deleteCreator } from '@/api'
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { useRoute } from 'vue-router';
 
 const creators = ref([])
+const route = useRoute()
 
-const getCreators = async () => {
+const loadCreators = async () => {
   try {
-    const response = await axios.get('/getcreators') // Ruta para solicitar los datos de todos los creadores
-    creators.value = response.data // Pasar todos los datos recibidos a una variable de la vista
+    const { data } = await getCreators(route.query)
+
+    creators.value = data
   } catch (error) {
     console.error('Error al obtener los creadores:', error)
   }
 }
 
-const deleteCreator = async (id) => {
+const destroyCreator = async (id) => {
   try {
-    await axios.delete(`/deletecreator/${id}`); // Ruta para eliminar un creador determinado
+    await deleteCreator(id) // Ruta para eliminar un género determinado
     creators.value = creators.value.filter((creator) => creator.id !== id); // Filtra el elemento eliminado
     isActive.value = false; // Esta variable cierra al modal que aparece al intentar eliminar un género
   } catch (error) {
-    console.error("Error al eliminar el creador:", error);
+    console.error("Error al eliminar al creador:", error);
     isActive.value = false
   }
 };
 
-onMounted(getCreators); // Llama a los creadores al cargar la página
+onMounted(() => {
+  loadCreators()
+}); // Llama a los creadores al cargar la página
 </script>
 
 <template>
+  <LayoutTitle title="Creadores" />
 
-  <Head title="Creadores" />
-  <AuthenticatedLayout>
-    <template #header>
-      <h2 class="text-xl font-semibold leading-tight text-gray-800">
-        Creadores
-      </h2>
-    </template>
-
-    <div class="py-12">
-      <div class="max-w-7xl mx-auto px-8">
-        <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4">
-          <div class="d-flex justify-space-between">
-            <v-btn :href="route('creators.create')" class="bg-indigo-darken-4">
-              Añadir Creador
-            </v-btn>
-          </div>
-        </div>
-
-        <div class="p-2 bg-white">
-          <h1 class="text-h4 font-weight-bold mb-6">Listado</h1>
-          <ul role="list" class="divide-y divide-gray-100">
-            <li class="flex justify-between gap-x-2 py-2" v-for="creator in creators" :key="creator.id">
-              <div class="flex min-w-0 gap-x-4 pt-2">
-                <p class="text-md/5 font-semibold text-gray-900">{{ creator.name }}</p>
-              </div>
-              <div class="flex min-w-0 gap-x-4 pt-2 pe-4">
-                <p class="text-md/5 text-gray-900">
-                  <v-btn icon="mdi-pencil-outline" :href="route('creators.edit', creator.id)" variant="text"></v-btn>
-                  &nbsp;
-                  <v-dialog max-width="500">
-                    <template v-slot:activator="{ props: activatorProps }">
-                      <v-btn v-bind="activatorProps" icon="mdi-trash-can-outline" variant="text"></v-btn>
-                    </template>
-
-                    <template v-slot:default="{ isActive }">
-                      <v-card title="Eliminar Creador">
-                        <v-card-text>
-                          ¿Está seguro de eliminar a <strong>{{ creator.name }}</strong>?
-                        </v-card-text>
-
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-
-                          <v-btn text="Cancelar" @click="isActive.value = false"></v-btn>
-                          <v-btn text="Eliminar" color="red" @click="deleteCreator(creator.id)"></v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </template>
-                  </v-dialog>
-                </p>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+  <div class="p-6 bg-white rounded border border-blue-grey-lighten-5 mb-4 py-5 pl-4">
+    <div class="d-flex justify-space-between">
+      <v-btn class="bg-indigo-darken-4" :to="{ name: 'creators_create' }" text="Añadir Creador"></v-btn>
     </div>
-  </AuthenticatedLayout>
+  </div>
+
+  <v-table theme="light">
+    <thead>
+      <tr>
+        <th class="text-left">
+          <strong>Nombre</strong>
+        </th>
+        <th class="text-center">
+          <strong>Acciones</strong>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="creator in creators" :key="creator.id" class="">
+        <td>{{ creator.name }}</td>
+        <td class="text-center">
+          <v-btn icon="mdi-pencil-outline" :to="{ name: 'creators_edit', params: { id: creator.id } }"
+            variant="text"></v-btn>
+
+          <v-dialog max-width="500">
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn v-bind="activatorProps" icon="mdi-trash-can-outline" variant="text"></v-btn>
+            </template>
+
+            <template v-slot:default="{ isActive }">
+              <v-card title="Eliminar creador">
+                <v-card-text>
+                  ¿Está seguro de eliminar a <strong>{{ creator.name }}</strong>?
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+
+                  <v-btn text="Cancelar" @click="isActive.value = false"></v-btn>
+                  <v-btn text="Eliminar" color="red" @click="destroyCreator(creator.id)"></v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+        </td>
+      </tr>
+    </tbody>
+  </v-table>
 </template>

@@ -1,93 +1,53 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import axios from 'axios';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
-
-const form = useForm({
+const form = ref({
     email: '',
     password: '',
-    remember: false,
-});
+})
+const router = useRouter()
+const visible = ref(false)
 
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
-};
+const doLogin = async () => {
+    await axios.post('/api/login', form.value)
+    router.push({ name: 'home' })
+}
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Log in" />
+    <form @submit.prevent="doLogin">
+        <div>
+            <v-img class="mx-auto my-6" max-width="228"
+                src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-v3-slim-text-light.svg"></v-img>
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
-        </div>
+            <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
+                <div class="text-subtitle-1 text-medium-emphasis">Correo Electrónico</div>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
+                <v-text-field v-model="form.email" density="compact" placeholder="Correo electrónico"
+                    prepend-inner-icon="mdi-email-outline" variant="outlined"></v-text-field>
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+                <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                    Contraseña
+                </div>
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                <v-text-field v-model="form.password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                    :type="visible ? 'text' : 'password'" density="compact" placeholder="Escriba su Contraseña"
+                    prepend-inner-icon="mdi-lock-outline" variant="outlined"
+                    @click:append-inner="visible = !visible"></v-text-field>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Contraseña" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Recuérdame</span
-                    >
-                </label>
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
+                <v-btn class="mb-8" color="blue" size="large" variant="tonal" type="submit" block>
                     Iniciar Sesión
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+                </v-btn>
+
+                <v-card-text class="text-center">
+                    ¿No tienes una cuenta?
+                    <a class="text-blue text-decoration-none" href="#" rel="noopener noreferrer" target="_blank">
+                        Registrate<v-icon icon="mdi-chevron-right"></v-icon>
+                    </a>
+                </v-card-text>
+            </v-card>
+        </div>
+    </form>
 </template>

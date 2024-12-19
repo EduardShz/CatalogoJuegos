@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenreRequest;
 use Illuminate\Http\Request;
 use App\Models\Genre;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 
 // NO olvidar que todo lo que se mande al front debe de ser envíado en formato 'json'
 // Para el store y update se utilizó un Request --> 'GenreRequest' para mantener el código más sencillo y limpio
@@ -14,23 +16,17 @@ class GenreController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return inertia('Genres/Index');
-    }
+        $genres = Genre::query()
+            ->when($request->search, function (Builder $query, string $search) {
+                return $query->where('name', 'LIKE', "%{$search}%");
+            })
+            ->get();
 
-    public function getAllGenres()
-    {
-        $genres = Genre::all();
-        return response()->json($genres);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return inertia('Genres/Create');
+        return response()->json([
+            'data' => $genres,
+        ]);
     }
 
     /**
@@ -49,19 +45,11 @@ class GenreController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Genre $genre)
     {
-        $genre = Genre::findOrFail($id);
-        return response()->json($genre);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $genre = Genre::find($id);
-        return inertia('Genres/Edit', ['genre' => $genre]);
+        return response()->json([
+            'data' => $genre,
+        ]);
     }
 
     /**
@@ -81,9 +69,10 @@ class GenreController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Genre $genre)
     {
-        Genre::destroy($id);
-        return response()->json(['message' => 'Género eliminado correctamente'], 200);
+        $genre->delete();
+
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

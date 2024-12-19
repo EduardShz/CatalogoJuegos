@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Requests\GameRequest;
 use Illuminate\Http\Request;
 use App\Models\Game;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 
 class GameController extends Controller
@@ -14,11 +15,6 @@ class GameController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        return inertia('Games/Index');
-    }
-
-    public function getAllGames()
     {
         $games = Game::with(['platforms', 'genres'])->get();
 
@@ -35,14 +31,6 @@ class GameController extends Controller
                 ];
             })
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return inertia('Games/Create');
     }
 
     /**
@@ -67,27 +55,21 @@ class GameController extends Controller
         ], 201);
     }
 
-    public function more($id)
-    {
-        $game = Game::find($id);
-        return inertia('Games/Show', ['game' => $game]);
-    }
-
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function showId(Game $game)
     {
-        $game = Game::with(['creator', 'platforms', 'genres'])->findOrFail($id);
+        $game->with(['creator', 'platforms', 'genres']);
 
         return response()->json([
             'id' => $game->id,
             'name' => $game->name,
             'published_year' => $game->published_year,
             'rating' => $game->rating,
-            'creator' => $game->creator->id, // Nombre del creador
-            'platforms' => $game->platforms->pluck('id'), // Nombres de las plataformas
-            'genres' => $game->genres->pluck('id'), // Nombres de los géneros
+            'creator_id' => $game->creator->id, // Id del creador
+            'platform_id' => $game->platforms->pluck('id'), // Id de las plataformas
+            'genre_id' => $game->genres->pluck('id'), // Id de los géneros
         ]);
     }
 
@@ -107,20 +89,11 @@ class GameController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $game = Game::find($id);
-        return inertia('Games/Edit', ['game' => $game]);
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(GameRequest $request, $id)
     {
-        Log::info('Datos recibidos:', $request->all());
+        //Log::info('Datos recibidos:', $request->all());
         $game = Game::findOrFail($id);
 
         // Actualizar los campos del juego
@@ -141,9 +114,10 @@ class GameController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Game $game)
     {
-        Game::destroy($id);
-        return response()->json(['message' => 'Juego eliminado correctamente'], 200);
+        $game->delete();
+        
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

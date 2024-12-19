@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\CreatorRequest;
-use App\Models\Creator;
 use Illuminate\Http\Request;
+use App\Models\Creator;
+use Illuminate\Http\JsonResponse;
 
 // NO olvidar que todo lo que se mande al front debe de ser envíado en formato 'json'
 // Para el store y update se utilizó un Request --> 'CreatorRequest' para mantener el código más sencillo y limpio
@@ -14,23 +16,17 @@ class CreatorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return inertia('Creators/Index');
-    }
+        $creator = Creator::query()
+            ->when($request->search, function (Builder $query, string $search) {
+                return $query->where('name', 'LIKE', "%{$search}%");
+            })
+            ->get();
 
-    public function getAllCreators()
-    {
-        $creators = Creator::all();
-        return response()->json($creators);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return inertia('Creators/Create');
+        return response()->json([
+            'data' => $creator,
+        ]);
     }
 
     /**
@@ -49,19 +45,11 @@ class CreatorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Creator $creator)
     {
-        $creator = Creator::findOrFail($id);
-        return response()->json($creator);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $creator = Creator::find($id);
-        return inertia('Creators/Edit', ['creator' => $creator]);
+        return response()->json([
+            'data' => $creator,
+        ]);
     }
 
     /**
@@ -81,9 +69,10 @@ class CreatorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroyC(Creator $creator)
     {
-        Creator::destroy($id);
-        return response()->json(['message' => 'Creador eliminado correctamente'], 200);
+        $creator->delete();
+        
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }
