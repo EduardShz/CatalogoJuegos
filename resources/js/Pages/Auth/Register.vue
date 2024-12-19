@@ -1,130 +1,92 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import axios from 'axios';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const form = useForm({
+const form = ref({
     name: '',
     username: '',
     email: '',
     password: '',
     password_confirmation: '',
-});
+    terms: false,
+})
+const router = useRouter()
+const visible = ref(false)
+const visible2 = ref(false)
+const errorMessages = ref({})
 
-const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
-};
+const doRegister = async () => {
+    try {
+        const response = await axios.post('/api/register', form.value)
+
+        router.push({ name: 'home' })
+        const token = response.data.token;
+        localStorage.setItem('token', token)
+    } catch (error) {
+        if (error.response.status == 422) {
+            errorMessages.value = error.response.data.errors
+            console.error('Error al intentar registrarse:', error)
+
+            return errorMessages
+        }
+    }
+}
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Registro" />
+    <form @submit.prevent="doRegister">
+        <div>
+            <v-img class="mx-auto my-6" max-width="228"
+                src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-v3-slim-text-light.svg"></v-img>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Nombre" />
+            <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="500" rounded="lg">
+                <div class="text-subtitle-1 text-medium-emphasis">Nombre</div>
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+                <v-text-field v-model="form.name" density="compact" placeholder="Nombre"
+                    prepend-inner-icon="mdi-account-outline" variant="outlined"
+                    :error-messages="errorMessages.name" autocomplete="name"></v-text-field>
 
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
+                <div class="text-subtitle-1 text-medium-emphasis">Username</div>
 
-            <div class="mt-4">
-                <InputLabel for="username" value="Username" />
+                <v-text-field v-model="form.username" density="compact" placeholder="Username"
+                    prepend-inner-icon="mdi-account" variant="outlined"
+                    :error-messages="errorMessages.username"></v-text-field>
 
-                <TextInput
-                    id="username"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.username"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+                <div class="text-subtitle-1 text-medium-emphasis">Correo Electrónico</div>
 
-                <InputError class="mt-2" :message="form.errors.username" />
-            </div>
+                <v-text-field v-model="form.email" density="compact" placeholder="Correo electrónico"
+                    prepend-inner-icon="mdi-email-outline" variant="outlined" autocomplete="email"
+                    :error-messages="errorMessages.email"></v-text-field>
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+                <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                    Contraseña
+                </div>
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="email"
-                />
+                <v-text-field v-model="form.password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                    :type="visible ? 'text' : 'password'" density="compact" placeholder="Escribir Contraseña"
+                    prepend-inner-icon="mdi-lock-outline" variant="outlined" @click:append-inner="visible = !visible"
+                    :error-messages="errorMessages.password"></v-text-field>
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                    Confirmar Contraseña
+                </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Contraseña" />
+                <v-text-field v-model="form.password_confirmation" :append-inner-icon="visible2 ? 'mdi-eye-off' : 'mdi-eye'"
+                    :type="visible2 ? 'text' : 'password'" density="compact" placeholder="Confirmar Contraseña"
+                    prepend-inner-icon="mdi-lock-outline" variant="outlined" @click:append-inner="visible2 = !visible2"
+                    :error-messages="errorMessages.password_confirmation"></v-text-field>
 
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirmar Contraseña"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    ¿Ya tienes una cuenta?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
+                <v-btn class="mb-8" color="blue" size="large" variant="tonal" type="submit" block>
                     Registrarse
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+                </v-btn>
+
+                <v-card-text class="text-center">
+                    ¿Ya tienes una cuenta?
+                    <v-btn append-icon="mdi-chevron-right" color="blue" class="pa-0 text-none" :to="{ name: 'login' }"
+                        variant="plain">Inicia Sesión</v-btn>
+                </v-card-text>
+            </v-card>
+        </div>
+    </form>
 </template>

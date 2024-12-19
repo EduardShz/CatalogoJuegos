@@ -1,7 +1,8 @@
 <script setup>
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { getUser } from '@/api';
 
 const form = ref({})
 const router = useRouter()
@@ -11,6 +12,12 @@ const logOut = async () => {
     localStorage.removeItem('token');
     router.push({ name: 'login' })
 }
+
+const username = ref()
+onMounted(async () => {
+  const user = await getUser();
+  username.value = user.username
+});
 </script>
 
 <template>
@@ -34,8 +41,8 @@ const logOut = async () => {
                 <!-- Dropdown Configuración -->
                 <v-menu offset-y>
                     <template v-slot:activator="{ props }">
-                        <v-btn v-bind="props" variant="text" class="d-flex align-center">
-                            Usuario
+                        <v-btn v-bind="props" variant="text" class="d-flex align-center text-none">
+                            {{ username }}
                             <v-icon class="ml-2">mdi-menu-down</v-icon>
                         </v-btn>
                     </template>

@@ -57,9 +57,8 @@ const doLogin = async () => {
 
                 <v-card-text class="text-center">
                     ¿No tienes una cuenta?
-                    <a class="text-blue text-decoration-none" href="#" rel="noopener noreferrer" target="_blank">
-                        Registrate<v-icon icon="mdi-chevron-right"></v-icon>
-                    </a>
+                    <v-btn append-icon="mdi-chevron-right" color="blue" class="pa-0 text-none"
+                        :to="{ name: 'register' }" variant="plain">Registrate</v-btn>
                 </v-card-text>
             </v-card>
         </div>

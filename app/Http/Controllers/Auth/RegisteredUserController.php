@@ -50,4 +50,9 @@ class RegisteredUserController extends Controller
 
         return redirect(route('dashboard', absolute: false));
     }
+
+    public function show(Request $request)
+    {
+        return response()->json($request->user());
+    }
 }

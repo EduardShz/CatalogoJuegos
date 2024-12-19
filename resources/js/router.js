@@ -11,12 +11,14 @@ import GameCreate from './Pages/Games/Create.vue'
 import GameEdit from './Pages/Games/Edit.vue'
 import GameShow from './Pages/Games/Show.vue'
 import Login from './Pages/Auth/Login.vue'
+import Register from './Pages/Auth/Register.vue'
 import Welcome from './Pages/Welcome.vue'
 
 const routes = [
     { path: '/', component: Welcome, name: 'welcome' },
     { path: '/login', component: Login, name: 'login' },
-    { path: '/home', component: Inicio, name: 'home',  meta: { requiresAuth: true } },
+    { path: '/register', component: Register, name: 'register' },
+    { path: '/inicio', component: Inicio, name: 'home',  meta: { requiresAuth: true } },
     { path: '/generos', component: GenresIndex, name: 'genres',  meta: { requiresAuth: true } },
     { path: '/generos/create', component: GenreCreate, name: 'genres_create',  meta: { requiresAuth: true } },
     { path: '/generos/:id/edit', component: GenreEdit, name: 'genres_edit',  meta: { requiresAuth: true } },

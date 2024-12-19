@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CreatorController;
 use App\Http\Controllers\GameController;
@@ -12,8 +14,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('api/login', [LoginController::class, 'login']);
 Route::post('api/logout', [LoginController::class, 'logout']);
+Route::post('api/register', [RegisterController::class, 'register']);
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('api/user', [RegisteredUserController::class, 'show']);
     //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
